@@ -11,8 +11,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.Base64;
 
 public class DesempaquetarCompostela {
 
@@ -67,9 +65,9 @@ public class DesempaquetarCompostela {
     cifrador.init(Cipher.DECRYPT_MODE, claveDES);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    byte[] bufferPlano = cifrador.doFinal(Base64.getEncoder().encode(datosCifrados));                             //
+    byte[] bufferPlano = cifrador.doFinal(datosCifrados);                             //
     mostrarBytes(bufferPlano);                                                                                    //
-    String datos = new String(Arrays.toString(bufferPlano));                                                      //
+    String datos = new String(bufferPlano);                                                      //
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     return datos;
   }
