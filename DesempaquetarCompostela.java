@@ -64,11 +64,10 @@ public class DesempaquetarCompostela {
     //Cifrador en modo descifrado
     cifrador.init(Cipher.DECRYPT_MODE, claveDES);
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    byte[] bufferPlano = cifrador.doFinal(datosCifrados);                             //
-    mostrarBytes(bufferPlano);                                                                                    //
-    String datos = new String(bufferPlano);                                                      //
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    byte[] bufferPlano = cifrador.doFinal(datosCifrados);
+    mostrarBytes(bufferPlano);
+    String datos = new String(bufferPlano);
+
     return datos;
   }
 
@@ -78,7 +77,7 @@ public class DesempaquetarCompostela {
 
   public static void mensajeAyuda() {
     System.out.println("Generador de Compostela");
-    System.out.println("\tSintaxis:   java GenerarClaves [clave publica] [ruta donde se almacenará la compostela]");
+    System.out.println("\tSintaxis:   java GenerarClaves [ruta de la compostela] [clave privada]");
     System.out.println();
   }
 
@@ -88,12 +87,12 @@ public class DesempaquetarCompostela {
       System.exit(1);
     }*/
 
-    Paquete compostelaVirtual = PaqueteDAO.leerPaquete("D:\\ESEI\\Cuarto\\SSI\\SSI_Cryptography\\compostela.paquete");//args[0]);
+    Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0]+".paquete" );
 
     try {
       byte[] claveEncriptada = compostelaVirtual.getContenidoBloque( "Clave Encriptada" );
       byte[] datosCifrados = compostelaVirtual.getContenidoBloque( "Datos Cifrados" );
-      PrivateKey clavePrivada = leerClavePrivada( "peregrino" );
+      PrivateKey clavePrivada = leerClavePrivada( "oficina" );
       SecretKey claveDES = descifrarRSA( claveEncriptada, clavePrivada );
       String datos = descifrarDatos( claveDES, datosCifrados );
 

@@ -49,7 +49,7 @@ public class GenerarCompostela {
   		byte[] bufferDatosCifrado;
 
       //Cifrar datos con algoritmo DES
-  		bufferDatosCifrado = cifradorDES.doFinal();
+  		bufferDatosCifrado = cifradorDES.doFinal(bufferDatos);
       System.out.println("DATOS CIFRADOS:");
       mostrarBytes(bufferDatosCifrado);
       System.out.println("FIN");
@@ -95,12 +95,12 @@ public class GenerarCompostela {
 
     public static void mensajeAyuda() {
       System.out.println("Generador de Compostela");
-      System.out.println("\tSintaxis:   java GenerarClaves [clave publica] [ruta donde se almacenará la compostela]");
+      System.out.println("\tSintaxis:   java GenerarClaves [clave publica oficina] [clave publica peregrino] [ruta donde se almacenará la compostela]");
       System.out.println();
     }
 
   public static final void main(String[] args) {
-      if (args.length != 2) {
+      if (args.length != 3) {
         mensajeAyuda();
         System.exit(1);
       }
@@ -142,7 +142,7 @@ public class GenerarCompostela {
         compostelaVirtual.anadirBloque( new Bloque( "Datos Cifrados", datosCifrados ) );
         compostelaVirtual.anadirBloque( new Bloque( "Clave Encriptada", claveEncriptada ) );
 
-        PaqueteDAO.escribirPaquete( args[1]+"\\compostela.paquete", compostelaVirtual );
+        PaqueteDAO.escribirPaquete( args[2]+"\\compostela.paquete", compostelaVirtual );
       }
       catch(Exception e){
         System.out.println(e);
