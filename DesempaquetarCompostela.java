@@ -14,26 +14,6 @@ import java.util.Map;
 
 public class DesempaquetarCompostela {
 
-  public static PrivateKey leerClavePrivada(String ruta) throws Exception{
-    // Cargar el provider BC
-    Security.addProvider(new BouncyCastleProvider());
-
-    //Provider
-    KeyFactory keyFactoryRSA = KeyFactory.getInstance("RSA", "BC");
-
-    File ficheroClavePrivada = new File(ruta + ".privada");
-    int tamanoFicheroClavePrivada = (int) ficheroClavePrivada.length();
-    byte[] bufferPriv = new byte[tamanoFicheroClavePrivada];
-    FileInputStream in = new FileInputStream(ficheroClavePrivada);
-    in.read(bufferPriv, 0, tamanoFicheroClavePrivada);
-    in.close();
-
-    PKCS8EncodedKeySpec clavePrivadaSpec = new PKCS8EncodedKeySpec(bufferPriv);
-		PrivateKey clavePrivada = keyFactoryRSA.generatePrivate(clavePrivadaSpec);
-
-    return clavePrivada;
-  }
-
   public static SecretKey descifrarRSA(byte[] claveEncriptada, PrivateKey clavePrivada) throws Exception{
     Security.addProvider(new BouncyCastleProvider());  // Cargar el provider BC
     //Crear el cifrador
@@ -65,14 +45,9 @@ public class DesempaquetarCompostela {
     cifrador.init(Cipher.DECRYPT_MODE, claveDES);
 
     byte[] bufferPlano = cifrador.doFinal(datosCifrados);
-    mostrarBytes(bufferPlano);
     String datos = new String(bufferPlano);
 
     return datos;
-  }
-
-  public static void mostrarBytes(byte [] buffer) {
-    System.out.write(buffer, 0, buffer.length);
   }
 
   public static void mensajeAyuda() {
@@ -82,17 +57,18 @@ public class DesempaquetarCompostela {
   }
 
   public static final void main(String args[]){
-    /*if (args.length != 2) {
+    if (args.length != 2) {
       mensajeAyuda();
       System.exit(1);
-    }*/
+    }
 
     Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0]+".paquete" );
 
     try {
       byte[] claveEncriptada = compostelaVirtual.getContenidoBloque( "Clave Encriptada" );
       byte[] datosCifrados = compostelaVirtual.getContenidoBloque( "Datos Cifrados" );
-      PrivateKey clavePrivada = leerClavePrivada( "oficina" );
+      byte[] firmaEncriptada = compostelaVirtual.getContenidoBloque( "Firma Digital" );
+      PrivateKey clavePrivada = Utils.leerClavePrivada( "oficina" );
       SecretKey claveDES = descifrarRSA( claveEncriptada, clavePrivada );
       String datos = descifrarDatos( claveDES, datosCifrados );
 
