@@ -46,9 +46,10 @@ public class SellarAlbergue {
       String json = JSONUtils.map2json( albergue.datos_albergue );
       System.out.println("Datos del albergue: " + json);
       byte[] firmaAlbergue = Utils.generarFirma( json, firmaPeregrinoDesencriptada );
+      byte[] firmaAlbergueEncriptada = Utils.encriptarConPrivada( firmaAlbergue, args[1] );
 
       compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Datos", json.getBytes() ) );
-      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Firma", firmaAlbergue ) );
+      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Firma", firmaAlbergueEncriptada ) );
 
       PaqueteDAO.escribirPaquete( args[2]+"\\compostela.paquete", compostelaVirtual );
     }

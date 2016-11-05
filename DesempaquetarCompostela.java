@@ -90,11 +90,12 @@ public class DesempaquetarCompostela {
         System.out.println( "Comprobando Actualmente: " +compostelaVirtual.getNombresBloque().get(count) );
 
         String datos = new String( compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count) ) );
-        byte[] firmaAlbergue = compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
+        byte[] firmaAlbergueEncriptada = compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
+        byte[] firmaAlbergueDesencriptada = Utils.desencriptarConPublica( firmaAlbergueEncriptada, compostelaVirtual.getNombresBloque().get(count).replace( "_DATOS", "" ) );
         //compostelaVirtual.eliminarBloque( compostelaVirtual.getNombresBloque().get(count) );
         //compostelaVirtual.eliminarBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
         count+=2;
-        if( Arrays.equals( firmaAlbergue, Utils.generarFirma( datos, firmaPeregrinoDesencriptada ) ) ) {
+        if( Arrays.equals( firmaAlbergueDesencriptada, Utils.generarFirma( datos, firmaPeregrinoDesencriptada ) ) ) {
           System.out.println( "LOS DATOS NO HAN SIDO MODIFICADOS" );
           System.out.println( datos );
         }

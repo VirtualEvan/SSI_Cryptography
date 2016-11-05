@@ -9,6 +9,8 @@ public class CaminoSantiago {
     try {
       GenerarClaves.main( new String[] {argumentos[0]} );
       GenerarClaves.main( new String[] {argumentos[1]} );
+      GenerarClaves.main( new String[] {argumentos[5]} );
+      GenerarClaves.main( new String[] {argumentos[6]} );
     }
     catch (Exception e){
       System.out.println("Error al generar las claves");
