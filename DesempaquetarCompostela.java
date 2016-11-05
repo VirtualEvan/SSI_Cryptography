@@ -87,7 +87,7 @@ public class DesempaquetarCompostela {
 
       int count = 0;
       while( compostelaVirtual.getNombresBloque().size()!=count ){
-        System.out.println( "Comprobando Actualmente: " +compostelaVirtual.getNombresBloque().get(count) );
+        System.out.println( "Comprobando Actualmente: " +compostelaVirtual.getNombresBloque().get(count).replace( "_DATOS", "" ) );
 
         String datos = new String( compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count) ) );
         byte[] firmaAlbergueEncriptada = compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
