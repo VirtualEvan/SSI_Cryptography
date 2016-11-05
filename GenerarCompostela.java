@@ -11,6 +11,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class GenerarCompostela {
@@ -23,7 +24,7 @@ public class GenerarCompostela {
 
       //*************************************************************//
       //Cifrado de datos con algoritmo DES y generación de su clave
-      KeyGenerator generadorDES = KeyGenerator.getInstance("DES")
+      KeyGenerator generadorDES = KeyGenerator.getInstance("DES");
 
 	    generadorDES.init(56); // clave de 56 bits
 	    SecretKey contrasena = generadorDES.generateKey();
@@ -51,25 +52,16 @@ public class GenerarCompostela {
     }
 
     private static byte[] encriptarClave(SecretKey contrasena, String nombreClave) throws Exception{
-      Security.addProvider( new BouncyCastleProvider() );
-
       //********************************************************//
       //Cifrado de clave del algoritmo DES con la clave pública RSA
-      PublicKey clavePublica = Utils.leerClavePublica( nombreClave );
-
-      // Creacion de cifrador
-      Cipher cifradorRSA = Cipher.getInstance("RSA", "BC");
-      cifradorRSA.init(Cipher.ENCRYPT_MODE, clavePublica);
-
-      // Cifrado de contrasena con la clave pública
-      byte[] claveEncriptada = cifradorRSA.doFinal(contrasena.getEncoded());
+      byte[] claveEncriptada = Utils.encriptarConPublica(contrasena.getEncoded(), nombreClave);
 
       return claveEncriptada;
     }
 
     public static void mensajeAyuda() {
       System.out.println("Generador de Compostela");
-      System.out.println("\tSintaxis:   java GenerarClaves [clave publica oficina] [clave publica peregrino] [ruta donde se almacenará la compostela]");
+      System.out.println("\tSintaxis:   java GenerarClaves [clave publica oficina] [clave privada peregrino] [ruta donde se almacenará la compostela]");
       System.out.println();
     }
 
@@ -78,6 +70,9 @@ public class GenerarCompostela {
         mensajeAyuda();
         System.exit(1);
       }
+      System.out.println();
+      System.out.println("GENERAR COMPOSTELA *************************************************");
+
       GenerarCompostela compostela = new GenerarCompostela();
 
       System.out.println("* Crear una cadena en formato JSON simplificado");
@@ -87,21 +82,21 @@ public class GenerarCompostela {
       compostela.datos_peregrino.put("domicilio", "Su casa");
       compostela.datos_peregrino.put("fecha", "28/09/16");
       compostela.datos_peregrino.put("lugar", "Ourense");
-      compostela.datos_peregrino.put("motivacion", "Ayer comencé a vivir una vida loca, super loca, requete loca, llegué a a la disco y me pasé de copas, entré con una, y salí con otra.");
+      compostela.datos_peregrino.put("motivacion", "Ayer comence a vivir una vida loca, super loca, requete loca, llegue a a la disco y me pase de copas, entre con una, y sali con otra.");
 
       /*
       Scanner in = new Scanner(System.in);
       System.out.print("Nombre : ");
       String nombre = in.nextLine();
-      datos.put("nombre", nombre);
+      compostela.datos_peregrino.put("nombre", nombre);
 
       System.out.print("Fecha  : ");
       String fecha = in.nextLine();
-      datos.put("fecha", fecha);
+      compostela.datos_peregrino.put("fecha", fecha);
 
       System.out.print("Lugar  : ");
       String lugar = in.nextLine();
-      datos.put("lugar", lugar);
+      compostela.datos_peregrino.put("lugar", lugar);
       in.close();
       */
 
@@ -112,7 +107,7 @@ public class GenerarCompostela {
         byte[] datosCifrados = cifrarDatos( json, claveDES );
         byte[] claveEncriptada = encriptarClave( claveDES, args[0] );
         byte[] firma = Utils.generarFirma( json );
-        byte[] firmaEncriptada = Utils.encriptarUsandoClavePrivada( firma, args[1] );
+        byte[] firmaEncriptada = Utils.encriptarConPrivada( firma, args[1] );
 
         Paquete compostelaVirtual = new Paquete();
         compostelaVirtual.anadirBloque( new Bloque( "Datos Cifrados", datosCifrados ) );

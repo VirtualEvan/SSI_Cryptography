@@ -11,22 +11,18 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Arrays;
 
 public class DesempaquetarCompostela {
 
-  public static SecretKey descifrarRSA(byte[] claveEncriptada, PrivateKey clavePrivada) throws Exception{
+  public static SecretKey descifrarRSA(byte[] claveEncriptada, String nombreClave) throws Exception{
     Security.addProvider(new BouncyCastleProvider());  // Cargar el provider BC
-    //Crear el cifrador
-    Cipher cifrador = Cipher.getInstance("RSA", "BC");
+
+    //Descifrar clave encriptada
+    byte[] bufferClave = Utils.desencriptarConPrivada( claveEncriptada, nombreClave);
 
     //Crear SKF (Transformacion de SecretKeys)
     SecretKeyFactory secretKeyFactoryDES = SecretKeyFactory.getInstance("DES");
-
-    //Modo descifrado (clave privada)
-    cifrador.init(Cipher.DECRYPT_MODE, clavePrivada); // Descrifra con la clave privada
-
-    //Descifrar clave encriptada
-    byte[] bufferClave = cifrador.doFinal(claveEncriptada);
 
     DESKeySpec DESspec = new DESKeySpec(bufferClave);
 		SecretKey claveDES = secretKeyFactoryDES.generateSecret(DESspec);
@@ -61,18 +57,55 @@ public class DesempaquetarCompostela {
       mensajeAyuda();
       System.exit(1);
     }
-
+    System.out.println();
+    System.out.println("DESEMPAQUETAR COMPOSTELA *************************************************");
     Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0]+".paquete" );
 
     try {
-      byte[] claveEncriptada = compostelaVirtual.getContenidoBloque( "Clave Encriptada" );
-      byte[] datosCifrados = compostelaVirtual.getContenidoBloque( "Datos Cifrados" );
-      byte[] firmaEncriptada = compostelaVirtual.getContenidoBloque( "Firma Digital" );
-      PrivateKey clavePrivada = Utils.leerClavePrivada( "oficina" );
-      SecretKey claveDES = descifrarRSA( claveEncriptada, clavePrivada );
-      String datos = descifrarDatos( claveDES, datosCifrados );
+      byte[] claveEncriptada = compostelaVirtual.getContenidoBloque( "CLAVE_ENCRIPTADA" );
+      byte[] datosCifrados = compostelaVirtual.getContenidoBloque( "DATOS_CIFRADOS" );
+      byte[] firmaEncriptada = compostelaVirtual.getContenidoBloque( "FIRMA_DIGITAL" );
+      compostelaVirtual.eliminarBloque( "CLAVE_ENCRIPTADA" );
+      compostelaVirtual.eliminarBloque( "DATOS_CIFRADOS" );
+      compostelaVirtual.eliminarBloque( "FIRMA_DIGITAL" );
+      SecretKey claveDES = descifrarRSA( claveEncriptada, "oficina" );
+      String datosPeregrino = descifrarDatos( claveDES, datosCifrados );
+      byte[] firmaPeregrinoDesencriptada = Utils.desencriptarConPublica( firmaEncriptada, "peregrino" );
+      byte[] firmaPeregrinoGenerada = Utils.generarFirma( datosPeregrino );
+      System.out.println( "***COMPORBANDO PEREGRINO***" );
 
-      System.out.println(datos);
+      System.out.println(datosPeregrino);
+
+      if( Arrays.equals(firmaPeregrinoDesencriptada,firmaPeregrinoGenerada) ) {
+        System.out.println( "LOS DATOS NO HAN SIDO MODIFICADOS" );
+      }
+      else {
+        System.out.println( "ERROR: DATOS MODIFICADOS" );
+      }
+
+      System.out.println( "***COMPORBANDO ALBERGUES***" );
+
+      int count = 0;
+      while( compostelaVirtual.getNombresBloque().size()!=count ){
+        System.out.println( "Comprobando Actualmente: " +compostelaVirtual.getNombresBloque().get(count) );
+
+        String datos = new String( compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count) ) );
+        byte[] firmaAlbergue = compostelaVirtual.getContenidoBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
+        //compostelaVirtual.eliminarBloque( compostelaVirtual.getNombresBloque().get(count) );
+        //compostelaVirtual.eliminarBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
+        count+=2;
+        if( Arrays.equals( firmaAlbergue, Utils.generarFirma( datos, firmaPeregrinoDesencriptada ) ) ) {
+          System.out.println( "LOS DATOS NO HAN SIDO MODIFICADOS" );
+          System.out.println( datos );
+        }
+        else {
+          System.out.println( "ERROR: DATOS MODIFICADOS" );
+        }
+      }
+      /*
+      for (String nombre : compostelaVirtual.getNombresBloque()){
+        System.out.println( nombre );
+      }*/
     }
     catch(Exception e){
       System.out.println(e);
@@ -80,9 +113,7 @@ public class DesempaquetarCompostela {
 
 
     /*
-    for (String nombre : compostelaVirtual.getNombresBloque()){
-      System.out.println(nombre);
-    }
+
     */
   }
 
