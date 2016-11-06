@@ -1,5 +1,11 @@
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+  * @author Samuel Ramilo Conde
+  * @author Esteban Puentes Silveira
+  * @code https://github.com/VirtualEvan/SSI_Cryptography
+  */
 public class CaminoSantiago {
   public static void main (String[] args){
     String[] argumentos;

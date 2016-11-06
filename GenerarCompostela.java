@@ -13,7 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-
+/**
+  * @author Samuel Ramilo Conde
+  * @author Esteban Puentes Silveira
+  * @code https://github.com/VirtualEvan/SSI_Cryptography
+  */
 public class GenerarCompostela {
   private Map<String, String> datos_peregrino = new HashMap<String, String>();
 

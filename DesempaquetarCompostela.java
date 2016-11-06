@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Arrays;
 
+/**
+  * @author Samuel Ramilo Conde
+  * @author Esteban Puentes Silveira
+  * @code https://github.com/VirtualEvan/SSI_Cryptography
+  */
 public class DesempaquetarCompostela {
 
   public static SecretKey descifrarRSA(byte[] claveEncriptada, String nombreClave) throws Exception{
