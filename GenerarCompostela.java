@@ -61,7 +61,7 @@ public class GenerarCompostela {
 
     public static void mensajeAyuda() {
       System.out.println("Generador de Compostela");
-      System.out.println("\tSintaxis:   java GenerarClaves [clave publica oficina] [clave privada peregrino] [ruta donde se almacenará la compostela]");
+      System.out.println("\tSintaxis:   java GenerarClaves [nombre compostela] [ nombre clave publica oficina] [nombre clave privada peregrino]");
       System.out.println();
     }
 
@@ -105,16 +105,16 @@ public class GenerarCompostela {
       try{
         SecretKey claveDES = generarClaveDES();
         byte[] datosCifrados = cifrarDatos( json, claveDES );
-        byte[] claveEncriptada = encriptarClave( claveDES, args[0] );
+        byte[] claveEncriptada = encriptarClave( claveDES, args[1] );
         byte[] firma = Utils.generarFirma( json );
-        byte[] firmaEncriptada = Utils.encriptarConPrivada( firma, args[1] );
+        byte[] firmaEncriptada = Utils.encriptarConPrivada( firma, args[2] );
 
         Paquete compostelaVirtual = new Paquete();
         compostelaVirtual.anadirBloque( new Bloque( "Datos Cifrados", datosCifrados ) );
         compostelaVirtual.anadirBloque( new Bloque( "Clave Encriptada", claveEncriptada ) );
         compostelaVirtual.anadirBloque( new Bloque( "Firma Digital" , firmaEncriptada ) );
 
-        PaqueteDAO.escribirPaquete( args[2]+"\\compostela.paquete", compostelaVirtual );
+        PaqueteDAO.escribirPaquete( args[0]+".paquete", compostelaVirtual );
       }
       catch(Exception e){
         System.out.println(e);

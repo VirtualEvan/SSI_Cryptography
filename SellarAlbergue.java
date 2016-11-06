@@ -5,9 +5,20 @@ import java.util.Scanner;
 public class SellarAlbergue {
   private Map<String, String> datos_albergue = new HashMap<String, String>();
 
-  public static void main(String[] args) {
+  public static void mensajeAyuda() {
+    System.out.println("Sellador de albergue");
+    System.out.println("\tSintaxis:   java GenerarClaves [nombre albergue]");
     System.out.println();
-    System.out.println( args[1].toUpperCase()+ " *************************************************");
+  }
+
+  public static void main(String[] args) {
+    if (args.length != 1) {
+      mensajeAyuda();
+      System.exit(1);
+    }
+
+    System.out.println();
+    System.out.println( args[0].toUpperCase()+ " *************************************************");
     SellarAlbergue albergue = new SellarAlbergue();
 
     /*
@@ -35,9 +46,9 @@ public class SellarAlbergue {
     try {
 
     //Pruebas sin scanner
-    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[1] ) );
+    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[0] ) );
 
-    Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0]+".paquete" );
+    Paquete compostelaVirtual = PaqueteDAO.leerPaquete( "compostela.paquete" );
 
 
       byte[] firmaPeregrinoEncriptada = compostelaVirtual.getContenidoBloque( "Firma Digital" );
@@ -46,12 +57,12 @@ public class SellarAlbergue {
       String json = JSONUtils.map2json( albergue.datos_albergue );
       System.out.println("Datos del albergue: " + json);
       byte[] firmaAlbergue = Utils.generarFirma( json, firmaPeregrinoDesencriptada );
-      byte[] firmaAlbergueEncriptada = Utils.encriptarConPrivada( firmaAlbergue, args[1] );
+      byte[] firmaAlbergueEncriptada = Utils.encriptarConPrivada( firmaAlbergue, args[0] );
 
-      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Datos", json.getBytes() ) );
-      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Firma", firmaAlbergueEncriptada ) );
+      compostelaVirtual.anadirBloque( new Bloque( args[0]+ "_Datos", json.getBytes() ) );
+      compostelaVirtual.anadirBloque( new Bloque( args[0]+ "_Firma", firmaAlbergueEncriptada ) );
 
-      PaqueteDAO.escribirPaquete( args[2]+"\\compostela.paquete", compostelaVirtual );
+      PaqueteDAO.escribirPaquete( "compostela.paquete", compostelaVirtual );
     }
     catch(Exception e) {
       System.out.println("Error al generar la firma del albergue");

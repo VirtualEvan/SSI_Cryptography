@@ -47,13 +47,13 @@ public class DesempaquetarCompostela {
   }
 
   public static void mensajeAyuda() {
-    System.out.println("Generador de Compostela");
-    System.out.println("\tSintaxis:   java GenerarClaves [ruta de la compostela] [clave privada]");
+    System.out.println("Desempaquetador de Compostela");
+    System.out.println("\tSintaxis:   java GenerarClaves [nombre de la compostela] [nombre clave privada oficina] [nombre clave publica peregrino]");
     System.out.println();
   }
 
   public static final void main(String args[]){
-    if (args.length != 2) {
+    if (args.length != 3) {
       mensajeAyuda();
       System.exit(1);
     }
@@ -68,19 +68,19 @@ public class DesempaquetarCompostela {
       compostelaVirtual.eliminarBloque( "CLAVE_ENCRIPTADA" );
       compostelaVirtual.eliminarBloque( "DATOS_CIFRADOS" );
       compostelaVirtual.eliminarBloque( "FIRMA_DIGITAL" );
-      SecretKey claveDES = descifrarRSA( claveEncriptada, "oficina" );
+      SecretKey claveDES = descifrarRSA( claveEncriptada, args[1] );
       String datosPeregrino = descifrarDatos( claveDES, datosCifrados );
-      byte[] firmaPeregrinoDesencriptada = Utils.desencriptarConPublica( firmaEncriptada, "peregrino" );
+      byte[] firmaPeregrinoDesencriptada = Utils.desencriptarConPublica( firmaEncriptada, args[2] );
       byte[] firmaPeregrinoGenerada = Utils.generarFirma( datosPeregrino );
       System.out.println( "***COMPORBANDO PEREGRINO***" );
 
       System.out.println(datosPeregrino);
 
       if( Arrays.equals(firmaPeregrinoDesencriptada,firmaPeregrinoGenerada) ) {
-        System.out.println( "LOS DATOS NO HAN SIDO MODIFICADOS" );
+        System.out.println( "LOS DATOS NO HAN SIDO ALTERADOS" );
       }
       else {
-        System.out.println( "ERROR: DATOS MODIFICADOS" );
+        System.out.println( "ERROR: DATOS ALTERADOS" );
       }
 
       System.out.println( "***COMPORBANDO ALBERGUES***" );
@@ -96,11 +96,11 @@ public class DesempaquetarCompostela {
         //compostelaVirtual.eliminarBloque( compostelaVirtual.getNombresBloque().get(count + 1) );
         count+=2;
         if( Arrays.equals( firmaAlbergueDesencriptada, Utils.generarFirma( datos, firmaPeregrinoDesencriptada ) ) ) {
-          System.out.println( "LOS DATOS NO HAN SIDO MODIFICADOS" );
+          System.out.println( "LOS DATOS NO HAN SIDO ALTERADOS" );
           System.out.println( datos );
         }
         else {
-          System.out.println( "ERROR: DATOS MODIFICADOS" );
+          System.out.println( "ERROR: DATOS ALTERADOS" );
         }
       }
       /*
