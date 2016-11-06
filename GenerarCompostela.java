@@ -61,7 +61,7 @@ public class GenerarCompostela {
 
     public static void mensajeAyuda() {
       System.out.println("Generador de Compostela");
-      System.out.println("\tSintaxis:   java GenerarClaves [nombre compostela] [ nombre clave publica oficina] [nombre clave privada peregrino]");
+      System.out.println("\tSintaxis:   java GenerarClaves [nombre compostela] [nombre clave publica oficina] [nombre clave privada peregrino]");
       System.out.println();
     }
 
