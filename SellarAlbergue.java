@@ -21,12 +21,17 @@ public class SellarAlbergue {
     System.out.println( args[1].toUpperCase()+ " *************************************************");
     SellarAlbergue albergue = new SellarAlbergue();
 
-    /*
+    try {
 
+    //Pruebas sin scanner
+    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[1] ) );
+
+
+    /*
     Scanner in = new Scanner(System.in);
     System.out.print("Numero : ");
-    String nombre = in.nextLine();
-    albergue.datos_albergue.put("numero", nombre);
+    String numero = in.nextLine();
+    albergue.datos_albergue.put("numero", numero);
 
     System.out.print("Nombre  : ");
     String nombre = in.nextLine();
@@ -40,13 +45,8 @@ public class SellarAlbergue {
     String fecha = in.nextLine();
     albergue.datos_albergue.put("fecha", fecha);
     in.close();
-
     */
 
-    try {
-
-    //Pruebas sin scanner
-    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[1] ) );
 
     Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0] + ".paquete" );
 

@@ -90,6 +90,14 @@ public class GenerarCompostela {
       String nombre = in.nextLine();
       compostela.datos_peregrino.put("nombre", nombre);
 
+      System.out.print("DNI  : ");
+      String dni = in.nextLine();
+      compostela.datos_peregrino.put("dni", dni);
+
+      System.out.print("Domicilio  : ");
+      String domicilio = in.nextLine();
+      compostela.datos_peregrino.put("domicilio", domicilio);
+
       System.out.print("Fecha  : ");
       String fecha = in.nextLine();
       compostela.datos_peregrino.put("fecha", fecha);
@@ -97,6 +105,10 @@ public class GenerarCompostela {
       System.out.print("Lugar  : ");
       String lugar = in.nextLine();
       compostela.datos_peregrino.put("lugar", lugar);
+
+      System.out.print("Motivacion  : ");
+      String motivacion = in.nextLine();
+      compostela.datos_peregrino.put("motivacion", motivacion);
       in.close();
       */
 
