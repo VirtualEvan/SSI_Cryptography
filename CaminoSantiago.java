@@ -35,7 +35,7 @@ public class CaminoSantiago {
       String json = JSONUtils.map2json(datos_albergue);
       Utils.escribirJSON(json, "albergue1");
 
-      SellarAlbergue.main( new String[] {argumentos[3]} );
+      SellarAlbergue.main( new String[] {argumentos[0], argumentos[3], argumentos[2], argumentos[3]} );
 
     }
     catch (Exception e){
@@ -54,7 +54,7 @@ public class CaminoSantiago {
       String json = JSONUtils.map2json(datos_albergue);
       Utils.escribirJSON(json, "albergue2");
 
-      SellarAlbergue.main( new String[] {argumentos[4]} );
+      SellarAlbergue.main( new String[] {argumentos[0], argumentos[4], argumentos[2], argumentos[4]} );
 
     }
     catch (Exception e){

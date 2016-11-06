@@ -7,18 +7,18 @@ public class SellarAlbergue {
 
   public static void mensajeAyuda() {
     System.out.println("Sellador de albergue");
-    System.out.println("\tSintaxis:   java GenerarClaves [nombre albergue]");
+    System.out.println("\tSintaxis:   java GenerarClaves [nombre paquete] [identificador albergue] [clave publica peregrino] [clave privada albergue]");
     System.out.println();
   }
 
   public static void main(String[] args) {
-    if (args.length != 1) {
+    if (args.length != 4) {
       mensajeAyuda();
       System.exit(1);
     }
 
     System.out.println();
-    System.out.println( args[0].toUpperCase()+ " *************************************************");
+    System.out.println( args[1].toUpperCase()+ " *************************************************");
     SellarAlbergue albergue = new SellarAlbergue();
 
     /*
@@ -46,21 +46,21 @@ public class SellarAlbergue {
     try {
 
     //Pruebas sin scanner
-    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[0] ) );
+    albergue.datos_albergue = JSONUtils.json2map( Utils.leerJSON( args[1] ) );
 
-    Paquete compostelaVirtual = PaqueteDAO.leerPaquete( "compostela.paquete" );
+    Paquete compostelaVirtual = PaqueteDAO.leerPaquete( args[0] + ".paquete" );
 
 
       byte[] firmaPeregrinoEncriptada = compostelaVirtual.getContenidoBloque( "Firma Digital" );
-      byte[] firmaPeregrinoDesencriptada = Utils.desencriptarConPublica( firmaPeregrinoEncriptada, "peregrino" );
+      byte[] firmaPeregrinoDesencriptada = Utils.desencriptarConPublica( firmaPeregrinoEncriptada, args[2] );
 
       String json = JSONUtils.map2json( albergue.datos_albergue );
       System.out.println("Datos del albergue: " + json);
       byte[] firmaAlbergue = Utils.generarFirma( json, firmaPeregrinoDesencriptada );
-      byte[] firmaAlbergueEncriptada = Utils.encriptarConPrivada( firmaAlbergue, args[0] );
+      byte[] firmaAlbergueEncriptada = Utils.encriptarConPrivada( firmaAlbergue, args[3] );
 
-      compostelaVirtual.anadirBloque( new Bloque( args[0]+ "_Datos", json.getBytes() ) );
-      compostelaVirtual.anadirBloque( new Bloque( args[0]+ "_Firma", firmaAlbergueEncriptada ) );
+      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Datos", json.getBytes() ) );
+      compostelaVirtual.anadirBloque( new Bloque( args[1]+ "_Firma", firmaAlbergueEncriptada ) );
 
       PaqueteDAO.escribirPaquete( "compostela.paquete", compostelaVirtual );
     }
